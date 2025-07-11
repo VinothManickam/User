@@ -36,13 +36,13 @@ function UserForm({ show, handleClose, onSave, userData, isEdit }) {
   }, [userData, isEdit]);
 
   const handleSave = () => {
-    // Basic validation
+ 
     if (!formData.username || !formData.type || !formData.phoneNo || !formData.contactPerson || !formData.panNo || !formData.gstinNo) {
       alert('All fields are required!');
       return;
     }
 
-    onSave({ ...formData, sNo: undefined }); // Exclude sNo from client data
+    onSave({ ...formData, sNo: undefined }); 
     setFormData({
       username: '',
       type: '',
