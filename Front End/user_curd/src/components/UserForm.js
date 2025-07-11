@@ -1,56 +1,116 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; 
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
-function UserForm() {
-  const [user, setUser] = useState({
+function UserForm({ show, handleClose, onSave, userData, isEdit }) {
+  const [formData, setFormData] = useState({
     username: '',
-    type: 'vendor',
+    type: '',
     phoneNo: '',
+    contactPerson: '',
+    panNo: '',
+    gstinNo: '',
+    _id: ''
   });
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:5000/api/users', user);
-      navigate('/'); 
-    } catch (error) {
-      console.error('Error adding user:', error);
+  useEffect(() => {
+    if (isEdit && userData) {
+      setFormData({
+        username: userData.username || '',
+        type: userData.type || '',
+        phoneNo: userData.phoneNo || '',
+        contactPerson: userData.contactPerson || '',
+        panNo: userData.panNo || '',
+        gstinNo: userData.gstinNo || '',
+        _id: userData._id || ''
+      });
+    } else {
+      setFormData({
+        username: '',
+        type: '',
+        phoneNo: '',
+        contactPerson: '',
+        panNo: '',
+        gstinNo: '',
+        _id: ''
+      });
     }
+  }, [userData, isEdit]);
+
+  const handleSave = () => {
+    // Basic validation
+    if (!formData.username || !formData.type || !formData.phoneNo || !formData.contactPerson || !formData.panNo || !formData.gstinNo) {
+      alert('All fields are required!');
+      return;
+    }
+
+    onSave({ ...formData, sNo: undefined }); // Exclude sNo from client data
+    setFormData({
+      username: '',
+      type: '',
+      phoneNo: '',
+      contactPerson: '',
+      panNo: '',
+      gstinNo: '',
+      _id: ''
+    });
   };
+
+  if (!show) return null;
 
   return (
-    <div>
-      <h2>Add User</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={user.username}
-          onChange={handleChange}
-          required
-        />
-        <select name="type" value={user.type} onChange={handleChange}>
-          <option value="vendor">Vendor</option>
-          <option value="customer">Customer</option>
-        </select>
-        <input
-          type="text"
-          name="phoneNo"
-          placeholder="Phone Number"
-          value={user.phoneNo}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Add User</button>
-      </form>
-      <Link to="/">Back to List</Link>
+    <div className="modal" style={{ display: 'block' }}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5>{isEdit ? 'Edit User' : 'Create User'}</h5>
+            <button type="button" className="btn-close" onClick={handleClose}></button>
+          </div>
+          <div className="modal-body">
+            <input
+              className="form-control mb-2"
+              placeholder="Username"
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            />
+            <select
+              className="form-control mb-2"
+              value={formData.type}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+            >
+              <option value="">Select Type</option>
+              <option value="vendor">Vendor</option>
+              <option value="customer">Customer</option>
+            </select>
+            <input
+              className="form-control mb-2"
+              placeholder="Phone No"
+              value={formData.phoneNo}
+              onChange={(e) => setFormData({ ...formData, phoneNo: e.target.value })}
+            />
+            <input
+              className="form-control mb-2"
+              placeholder="Contact Person"
+              value={formData.contactPerson}
+              onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+            />
+            <input
+              className="form-control mb-2"
+              placeholder="PAN No"
+              value={formData.panNo}
+              onChange={(e) => setFormData({ ...formData, panNo: e.target.value })}
+            />
+            <input
+              className="form-control mb-2"
+              placeholder="GSTIN No"
+              value={formData.gstinNo}
+              onChange={(e) => setFormData({ ...formData, gstinNo: e.target.value })}
+            />
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={handleClose}>Close</button>
+            <button type="button" className="btn btn-primary" onClick={handleSave}>Save</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
