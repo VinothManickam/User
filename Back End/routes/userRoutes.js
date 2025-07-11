@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-
 router.post('/', async (req, res) => {
   try {
     const lastUser = await User.findOne().sort({ sNo: -1 });
@@ -13,6 +12,9 @@ router.post('/', async (req, res) => {
       username: req.body.username,
       type: req.body.type,
       phoneNo: req.body.phoneNo,
+      contactPerson: req.body.contactPerson,
+      panNo: req.body.panNo,
+      gstinNo: req.body.gstinNo,
     });
     
     await user.save();
@@ -22,7 +24,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-
 router.get('/', async (req, res) => {
   try {
     const users = await User.find().sort({ sNo: 1 });
@@ -31,7 +32,6 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 router.get('/:id', async (req, res) => {
   try {
@@ -43,7 +43,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-
 router.put('/:id', async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
@@ -52,6 +51,9 @@ router.put('/:id', async (req, res) => {
         username: req.body.username,
         type: req.body.type,
         phoneNo: req.body.phoneNo,
+        contactPerson: req.body.contactPerson,
+        panNo: req.body.panNo,
+        gstinNo: req.body.gstinNo,
       },
       { new: true }
     );
@@ -61,7 +63,6 @@ router.put('/:id', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
 
 router.delete('/:id', async (req, res) => {
   try {
