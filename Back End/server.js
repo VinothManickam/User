@@ -1,22 +1,25 @@
+require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
-const dotenv = require('dotenv');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 
-dotenv.config();
 const app = express();
 
-
-app.use(cors());
-app.use(express.json());
-
+const uploadDir = path.join(__dirname, 'Uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log('Created Uploads directory');
+}
 
 connectDB();
 
-
+app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(express.json());
+app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use('/api/users', userRoutes);
 
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
